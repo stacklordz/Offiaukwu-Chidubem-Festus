@@ -1,33 +1,66 @@
-const toggleBtn = document.getElementById('toggleToolsBtn');
-const toolsSection = document.getElementById('toolsSection');
+// Toggle Tools Section with accessibility improvements
+const toggleBtn = document.getElementById("toggleToolsBtn");
+const toolsSection = document.getElementById("toolsSection");
 
-toggleBtn.addEventListener('click', () => {
-    toolsSection.classList.toggle('open');
-    toggleBtn.textContent = toolsSection.classList.contains('open') ? 'See Less' : 'See More';
+toggleBtn.addEventListener("click", () => {
+  const isOpen = toolsSection.classList.toggle("open");
+  toggleBtn.textContent = isOpen ? "See Less" : "See More";
+  toggleBtn.setAttribute("aria-expanded", isOpen);
 });
 
-// Check if element is in viewport
-function isInView(element) {
-    const rect = element.getBoundingClientRect();
-    return rect.top < window.innerHeight - 100;
-}
+// Intersection Observer options
+const observerOptions = {
+  root: null,
+  rootMargin: "0px 0px -100px 0px", // Trigger a bit before element fully in view
+  threshold: 0,
+};
 
-// Show all skills together on scroll when visible
-function showSkillsOnScroll() {
-    const skills = document.querySelectorAll('.skill.hidden');
-    let anyVisible = false;
-    skills.forEach(skill => {
-        if (isInView(skill)) {
-            skill.classList.add('show');
-            skill.classList.remove('hidden');
-            anyVisible = true;
-        }
-    });
-    // Optional: If all skills shown, remove listener to optimize
-    if (anyVisible && document.querySelectorAll('.skill.hidden').length === 0) {
-        window.removeEventListener('scroll', showSkillsOnScroll);
+// Observer for elements with animate-on-scroll class
+const revealObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("revealed");
+      observer.unobserve(entry.target); // Stop observing after reveal
     }
-}
+  });
+}, observerOptions);
 
-window.addEventListener('scroll', showSkillsOnScroll);
-window.addEventListener('load', showSkillsOnScroll);
+// Observe all animate-on-scroll elements
+document.querySelectorAll(".animate-on-scroll").forEach((el) => {
+  revealObserver.observe(el);
+});
+
+// Observer for skills with hidden/show classes
+const skillObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("show");
+      entry.target.classList.remove("hidden");
+      observer.unobserve(entry.target); // Stop observing after showing
+    }
+  });
+}, observerOptions);
+
+// Observe all skills with hidden class
+document.querySelectorAll(".skill.hidden").forEach((skill) => {
+  skillObserver.observe(skill);
+});
+
+// Optional: On load, you could still run these functions to catch already visible elements (fallback)
+window.addEventListener("load", () => {
+  document.querySelectorAll(".animate-on-scroll").forEach((el) => {
+    if (el.classList.contains("revealed")) return;
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight - 100) {
+      el.classList.add("revealed");
+    }
+  });
+
+  document.querySelectorAll(".skill.hidden").forEach((skill) => {
+    const rect = skill.getBoundingClientRect();
+    if (rect.top < window.innerHeight - 100) {
+      skill.classList.add("show");
+      skill.classList.remove("hidden");
+    }
+  });
+});

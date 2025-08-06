@@ -108,6 +108,19 @@ body {
 
 .hero-text {
   line-height: 2;
+  animation: slideInLeft 1s ease-in-out 0.2s forwards;
+}
+
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-120px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 #first-p {
@@ -322,6 +335,19 @@ body {
   max-inline-size: 500px;
   border-radius: 15px;
   /* rounded corners */
+  animation: fadeInUp 1s ease-in 0.2s forwards;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(120px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .about-img img {
@@ -378,6 +404,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 300px;
+  animation: fadeInDown 1s ease-in 0.2s forwards;
 }
 
 .project-item {
@@ -445,7 +472,12 @@ body {
 }
 
 /* Responsive tweak for smaller screens */
-@media (max-width: 700px) {
+@media (max-width: 992px) {
+  .menu li a {
+    padding: 15px 22px;
+    border-radius: 12px;
+  }
+
   .project-item {
     flex-direction: column;
     align-items: center;
@@ -478,7 +510,7 @@ body {
     margin: 20px;
   }
 
-  .contact-icons{
+  .contact-icons {
     font-size: 2rem;
   }
 
@@ -548,4 +580,20 @@ body {
 }
 .footerh1 {
   line-height: 3;
+}
+
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateX(-100px);
+}
+
+.fadeDown.revealed {
+  animation: fadeInDown 1s ease-in 0.2s forwards;
+}
+.fadeUp.revealed {
+  animation: fadeInUp 1s ease-in 0.2s forwards;
+}
+
+.slideLeft.revealed {
+  animation: slideInLeft 1s ease-in-out 0.2s forwards;
 }
